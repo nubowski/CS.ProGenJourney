@@ -95,13 +95,29 @@ public class TerrainController
         return x * x * x *(x * (x * 6 - 15) + 10);
     }
 
-    public void ApplyPerlinNosie(List<TerrainPoint> terrain, double scale)
+    public void ApplyPerlinNoise(List<TerrainPoint> terrain, double scale)
     {
         foreach (var terrainPoint in terrain)
         {
             double perlinValue = Perlin(terrainPoint.X / scale, terrainPoint.Y / scale);
             terrainPoint.Height = ScaleHeight(perlinValue);
 
+            if (terrainPoint.Height < 20)
+            {
+                terrainPoint.Type = TerrainType.Water;
+            }
+            else if (terrainPoint.Height < 50)
+            {
+                terrainPoint.Type = TerrainType.Grass;
+            }
+            else if (terrainPoint.Height < 80)
+            {
+                terrainPoint.Type = TerrainType.Hill;
+            }
+            else
+            {
+                terrainPoint.Type = TerrainType.Mountain;
+            }
         }
     }
 
