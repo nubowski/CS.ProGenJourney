@@ -134,5 +134,36 @@ public class TerrainController
 
         return terrain;
     }
+
+    public void PrintTerrain(List<TerrainPoint> terrain, int width, int height)
+    {
+        for (int y = 0; y < height; y++)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                TerrainPoint point = terrain[y * width + x];
+                char c;
+                switch (point.Type)
+                {
+                    case TerrainType.Water:
+                        c = '~';
+                        break;
+                    case TerrainType.Grass:
+                        c = '.';
+                        break;
+                    case TerrainType.Hill:
+                        c = 'o';
+                        break;
+                    case TerrainType.Mountain:
+                        c = '^';
+                        break;
+                    default:
+                        throw new AggregateException("Unknown terrain type");
+                }
+                Console.Write(c);
+            }
+            Console.WriteLine();
+        }
+    }
     
 }
