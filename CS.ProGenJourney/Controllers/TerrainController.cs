@@ -1,36 +1,36 @@
-﻿using System.Drawing;
-using System.Formats.Asn1;
-using System.Numerics;
+﻿using System.Numerics;
 using CS.ProGenJourney.Models;
 
 namespace CS.ProGenJourney.Controllers;
 
 public class TerrainController
 {
-    private Vector2[,] gradients;
-    private int gridSize;
-    private Random rand;
+    private Vector2[,] _gradients;
+    private int _gridSize;
+    private Random _rand;
 
     public TerrainController(int gridSize)
     {
-        this.gridSize = gridSize;
+        this._gridSize = gridSize;
+        
         // rnd gen
-        rand = new Random();
+        _rand = new Random();
         // grid
-        gradients = new Vector2[gridSize, gridSize];
+        _gradients = new Vector2[gridSize, gridSize];
         GenerateGradients();
     }
 
     private void GenerateGradients()
     {
-        for (int i = 0; i < gridSize; i++)
+        for (int i = 0; i < _gridSize; i++)
         {
-            for (int j = 0; j < gridSize; j++)
+            for (int j = 0; j < _gridSize; j++)
             {
                 // rnd angle
-                double randomAngle = rand.NextDouble() * 2 * Math.PI;
+                double randomAngle = _rand.NextDouble() * 2 * Math.PI;
                 // vector from angle
-                gradients[i, j] = new Vector2((float) Math.Cos(randomAngle));
+                _gradients[i, j] = new Vector2((float) Math.Cos(randomAngle), (float) Math.Sin(randomAngle));
+
             }
         }
     }
@@ -44,8 +44,8 @@ public class TerrainController
         int y1 = y0 + 1;
 
         // Calculate the interpolation weights
-        double sx = x - (double)x0;
-        double sy = y - (double)y0;
+        double sx = x - x0;
+        double sy = y - y0;
 
         // Interpolate between grid point gradients
         double n0, n1, ix0, ix1, value;
@@ -62,12 +62,16 @@ public class TerrainController
 
     private double DotGridGradient(int ix, int iy, double x, double y)
     {
+        // wrap to prevent out of array exception
+        ix = Math.Abs(ix) % _gridSize;
+        iy = Math.Abs(iy) % _gridSize;
+        
         // comp the dist vector
         double dx = x - ix;
         double dy = y - iy;
         
         // comp return a `dot-product`
-        return (dx * gradients[ix, iy].X + dy * gradients[ix, iy].Y);
+        return (dx * _gradients[ix, iy].X + dy * _gradients[ix, iy].Y);
     }
 
     private double Interpolate(double a0, double a1, double w)
@@ -114,7 +118,7 @@ public class TerrainController
             {
                 terrainPoint.Type = TerrainType.Hill;
             }
-            else
+            else if (terrainPoint.Height < 100)
             {
                 terrainPoint.Type = TerrainType.Mountain;
             }
