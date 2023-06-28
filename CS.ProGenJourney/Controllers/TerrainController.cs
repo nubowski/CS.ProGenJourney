@@ -109,19 +109,19 @@ public class TerrainController
 
             if (terrainPoint.Height < 35)
             {
-                terrainPoint.Type = TerrainType.Water;
+                terrainPoint.TerrainType = TerrainType.Water;
             }
             else if (terrainPoint.Height < 50)
             {
-                terrainPoint.Type = TerrainType.Grass;
+                terrainPoint.TerrainType = TerrainType.Grass;
             }
             else if (terrainPoint.Height < 65)
             {
-                terrainPoint.Type = TerrainType.Hill;
+                terrainPoint.TerrainType = TerrainType.Hill;
             }
             else if (terrainPoint.Height < 100)
             {
-                terrainPoint.Type = TerrainType.Mountain;
+                terrainPoint.TerrainType = TerrainType.Mountain;
             }
         }
     }
@@ -148,7 +148,7 @@ public class TerrainController
             {
                 TerrainPoint point = terrain[y * width + x];
                 char c;
-                switch (point.Type)
+                switch (point.TerrainType)
                 {
                     case TerrainType.Water:
                         c = '~';
