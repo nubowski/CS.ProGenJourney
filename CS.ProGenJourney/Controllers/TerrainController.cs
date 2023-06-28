@@ -106,22 +106,27 @@ public class TerrainController
             // extreme values will be more common (math.pow)
             double perlinValue = Perlin(terrainPoint.X / scale, terrainPoint.Y / scale);
             terrainPoint.Height = ScaleHeight(perlinValue);
+            bool useAlternate = _rand.NextDouble() < 0.15;  // 15% chance to use an alt terrain type
 
             if (terrainPoint.Height < 35)
             {
-                terrainPoint.TerrainType = TerrainType.Water;
+                terrainPoint.TerrainType = useAlternate ? TerrainType.Grass : TerrainType.Water;
+                terrainPoint.BiomeType = BiomeType.Swamp;
             }
             else if (terrainPoint.Height < 50)
             {
-                terrainPoint.TerrainType = TerrainType.Grass;
+                terrainPoint.TerrainType = useAlternate ? TerrainType.Hill : TerrainType.Grass;
+                terrainPoint.BiomeType = BiomeType.Plains;
             }
             else if (terrainPoint.Height < 65)
             {
-                terrainPoint.TerrainType = TerrainType.Hill;
+                terrainPoint.TerrainType = useAlternate ? TerrainType.Mountain : TerrainType.Hill;
+                terrainPoint.BiomeType = BiomeType.DarkForest;
             }
             else if (terrainPoint.Height < 100)
             {
-                terrainPoint.TerrainType = TerrainType.Mountain;
+                terrainPoint.TerrainType = useAlternate ? TerrainType.Water : TerrainType.Mountain;
+                terrainPoint.BiomeType = BiomeType.Snow;
             }
         }
     }
