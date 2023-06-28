@@ -9,3 +9,11 @@ public class Terrain
     public string Type { get; set; }
     public List<TerrainPoint> Shape { get; set; }
 }
+
+public enum TerrainType
+{
+    Water,
+    Grass,
+    Hill,
+    Mountain
+}
