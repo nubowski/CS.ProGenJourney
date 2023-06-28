@@ -5,23 +5,17 @@ namespace CS.ProGenJourney.Controllers;
 public class BiomeController
 {
     // make a biome hash tab
-    private Dictionary<TerrainType, (char Symbol, ConsoleColor Color)> BiomeSymbols;
+    private Dictionary<(TerrainType, BiomeType), (char Symbol, ConsoleColor Color)> _biomeTerrainSymbols;
 
 
-    public BiomeController(Dictionary<TerrainType, (char Symbol, ConsoleColor Color)> biomeSymbols)
+    public BiomeController(Dictionary<(TerrainType, BiomeType), (char Symbol, ConsoleColor Color)> biomeTerrainSymbols)
     {
-        BiomeSymbols = new Dictionary<TerrainType, (char, ConsoleColor)>
-        {
-            {TerrainType.Water, ('~', ConsoleColor.Blue)},
-            {TerrainType.Grass, ('.', ConsoleColor.Green)},
-            {TerrainType.Hill, ('o', ConsoleColor.DarkYellow)},
-            {TerrainType.Mountain, ('^', ConsoleColor.Gray)},
-        };
+        _biomeTerrainSymbols = biomeTerrainSymbols;
     }
 
-    public (char Symbol, ConsoleColor Color) GetBiomeSymbol(TerrainType type)
+    public (char Symbol, ConsoleColor Color) GetBiomeSymbol(TerrainType terrain, BiomeType biome)
     {
-        return BiomeSymbols[type];
+        return _biomeTerrainSymbols[(terrain, biome)];
     }
     
     

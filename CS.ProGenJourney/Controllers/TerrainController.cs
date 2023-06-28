@@ -91,6 +91,16 @@ public class TerrainController
         double max = 100;
         return min + (height * (max - min));
     }
+    
+    private double ScaleTemperature(double temperature)
+    {
+        // normalize values from -1 to 1 to -80 to 55
+        temperature = (temperature + 1) * 0.5;
+        // scale to range
+        double min = -55;
+        double max = 55;
+        return min + (temperature * (max - min));
+    }
 
     private double Smooth(double x)
     {
@@ -99,13 +109,17 @@ public class TerrainController
         return x * x * x *(x * (x * 6 - 15) + 10);
     }
 
-    public void ApplyPerlinNoise(List<TerrainPoint> terrain, double scale)
+    public void ApplyPerlinNoise(List<TerrainPoint> terrain, double scale, double temperatureScale)
     {
         foreach (var terrainPoint in terrain)
         {
             // extreme values will be more common (math.pow)
             double perlinValue = Perlin(terrainPoint.X / scale, terrainPoint.Y / scale);
             terrainPoint.Height = ScaleHeight(perlinValue);
+
+            double temperature = Perlin(terrainPoint.X / temperatureScale, terrainPoint.Y / temperatureScale);
+            temperature = ScaleTemperature(temperature);
+            
             bool useAlternate = _rand.NextDouble() < 0.15;  // 15% chance to use an alt terrain type
 
             if (terrainPoint.Height < 35)
@@ -116,7 +130,9 @@ public class TerrainController
             else if (terrainPoint.Height < 50)
             {
                 terrainPoint.TerrainType = useAlternate ? TerrainType.Hill : TerrainType.Grass;
-                terrainPoint.BiomeType = BiomeType.Plains;
+                if (temperature < -5) terrainPoint.BiomeType = BiomeType.Snow;
+                else if (temperature > 35) terrainPoint.BiomeType = BiomeType.Desert;
+                else terrainPoint.BiomeType = BiomeType.Plains;
             }
             else if (terrainPoint.Height < 65)
             {
@@ -145,35 +161,21 @@ public class TerrainController
         return terrain;
     }
 
-    public void PrintTerrain(List<TerrainPoint> terrain, int width, int height)
+    public void PrintTerrain(List<TerrainPoint> terrain, int width, int height, BiomeController biomeController)
     {
         for (int y = 0; y < height; y++)
         {
             for (int x = 0; x < width; x++)
             {
                 TerrainPoint point = terrain[y * width + x];
-                char c;
-                switch (point.TerrainType)
-                {
-                    case TerrainType.Water:
-                        c = '~';
-                        break;
-                    case TerrainType.Grass:
-                        c = '.';
-                        break;
-                    case TerrainType.Hill:
-                        c = 'o';
-                        break;
-                    case TerrainType.Mountain:
-                        c = '^';
-                        break;
-                    default:
-                        throw new AggregateException("Unknown terrain type");
-                }
-                Console.Write(c);
+                var (symbol, color) = biomeController.GetBiomeSymbol(point.TerrainType, point.BiomeType);
+
+                Console.ForegroundColor = color;
+                Console.Write(symbol);
             }
             Console.WriteLine();
         }
+        Console.ResetColor(); // reset color
     }
     
 }
