@@ -103,10 +103,11 @@ public class TerrainController
     {
         foreach (var terrainPoint in terrain)
         {
+            // extreme values will be more common (math.pow)
             double perlinValue = Perlin(terrainPoint.X / scale, terrainPoint.Y / scale);
             terrainPoint.Height = ScaleHeight(perlinValue);
 
-            if (terrainPoint.Height < 20)
+            if (terrainPoint.Height < 35)
             {
                 terrainPoint.Type = TerrainType.Water;
             }
@@ -114,7 +115,7 @@ public class TerrainController
             {
                 terrainPoint.Type = TerrainType.Grass;
             }
-            else if (terrainPoint.Height < 80)
+            else if (terrainPoint.Height < 65)
             {
                 terrainPoint.Type = TerrainType.Hill;
             }
